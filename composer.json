@@ -1,5 +1,5 @@
 {
-    "name": "CvoTechnologies/Notifier",
+    "name": "cvo-technologies/cakephp-notifier",
     "description": "CvoTechnologies/Notifier plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
