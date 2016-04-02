@@ -9,6 +9,9 @@
     "require-dev": {
         "phpunit/phpunit": "*"
     },
+    "suggest": {
+        "cvo-technologies/cakephp-twitter": "For Twitter notifications"
+    },
     "autoload": {
         "psr-4": {
             "CvoTechnologies\\Notifier\\": "src"
