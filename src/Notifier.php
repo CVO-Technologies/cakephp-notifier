@@ -5,6 +5,7 @@ namespace CvoTechnologies\Notifier;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use CvoTechnologies\Notifier\Exception\MissingActionException;
 
 /**
  * Class Notifier
@@ -14,11 +15,11 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  */
 abstract class Notifier implements EventListenerInterface
 {
-    use ModelAwareTrait;
     use LocatorAwareTrait;
+    use ModelAwareTrait;
 
     /**
-     * Mailer's name.
+     * Notifier's name.
      *
      * @var string
      */
@@ -32,8 +33,8 @@ abstract class Notifier implements EventListenerInterface
     protected $_notification;
 
     /**
-     * Cloned Notification instance for restoring instance after email is sent by
-     * mailer action.
+     * Cloned Notification instance for restoring instance after notification is sent by
+     * notifier action.
      *
      * @var string
      */
@@ -57,7 +58,7 @@ abstract class Notifier implements EventListenerInterface
     }
 
     /**
-     * Returns the mailer's name.
+     * Returns the notifier's name.
      *
      * @return string
      */
@@ -109,7 +110,7 @@ abstract class Notifier implements EventListenerInterface
     }
 
     /**
-     * Sets email view vars.
+     * Sets notification view vars.
      *
      * @param string|array $key Variable name or hash of view variables.
      * @param mixed $value View variable value.
@@ -122,22 +123,25 @@ abstract class Notifier implements EventListenerInterface
     }
 
     /**
-     * Sends email.
+     * Sends notification.
      *
-     * @param string $action The name of the mailer action to trigger.
-     * @param array $args Arguments to pass to the triggered mailer action.
-     * @param array $headers Headers to set.
+     * @param string $action The name of the notifier action to trigger.
+     * @param array $args Arguments to pass to the triggered notifier action.
      * @return array
-     * @throws \Cake\Mailer\Exception\MissingActionException
+     * @throws \CvoTechnologies\Notifier\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
     public function send($action, $args = [])
     {
         if (!method_exists($this, $action)) {
             throw new MissingActionException([
-                'mailer' => $this->getName() . 'Mailer',
+                'notifier' => $this->getName() . 'Notifier',
                 'action' => $action,
             ]);
+        }
+
+        if (!$this->_notification->viewBuilder()->template()) {
+            $this->_notification->viewBuilder()->template($action);
         }
 
         call_user_func_array([$this, $action], $args);
@@ -149,7 +153,7 @@ abstract class Notifier implements EventListenerInterface
     }
 
     /**
-     * Reset email instance.
+     * Reset notification instance.
      *
      * @return $this
      */

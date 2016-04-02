@@ -53,6 +53,12 @@ class Notification
      */
     protected $_profile = [];
 
+
+    /**
+     * Constructor
+     *
+     * @param array|string|null $config Array of configs, or string to load configs from app.php
+     */
     public function __construct($config = null)
     {
         $this->viewBuilder()
@@ -166,16 +172,15 @@ class Notification
     }
 
     /**
-     * Get/set the transport.
+     * Get/set the transports.
      *
      * When setting the transport you can either use the name
      * of a configured transport or supply a constructed transport.
      *
-     * @param string|\Cake\Mailer\AbstractTransport|null $name Either the name of a configured
+     * @param array|null $transports Either an array of transports or null to get all.
+     * @return $this|AbstractTransport
+     * @internal param AbstractTransport|null|string $name Either the name of a configured
      *   transport, or a transport instance.
-     * @return \Cake\Mailer\AbstractTransport|$this
-     * @throws \LogicException When the chosen transport lacks a send method.
-     * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
     public function transports($transports = null)
     {
@@ -206,6 +211,13 @@ class Notification
         return $this;
     }
 
+    /**
+     * Set/get the target of the notification.
+     *
+     * @param array|null $to Either an array of targets or null to get them.
+     * @param null|string $type Either the type to egt or set the target for.
+     * @return $this|array|string
+     */
     public function to($to = null, $type = null)
     {
         if ($to === null) {
@@ -217,8 +229,14 @@ class Notification
         }
 
         if (is_array($to)) {
-            foreach ($to as $type => $target) {
-                $this->to($target, $type);
+            foreach ($to as $loopType => $target) {
+                if (!is_array($target)) {
+                    $this->_to[$type][] = $target;
+
+                    continue;
+                }
+
+                $this->to($target, $loopType);
             }
 
             return $this;
@@ -281,7 +299,7 @@ class Notification
      *
      * Use this method to define transports to use in delivery profiles.
      * Once defined you cannot edit the configurations, and must use
-     * Email::dropTransport() to flush the configuration first.
+     * Notification::dropTransport() to flush the configuration first.
      *
      * When using an array of configuration data a new transport
      * will be constructed for each message sent. When using a Closure, the
@@ -292,7 +310,7 @@ class Notification
      *
      * @param string|array $key The configuration name to read/write. Or
      *   an array of multiple transports to set.
-     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
+     * @param array|\CvoTechnologies\Notifier\AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance.
      * @return \CvoTechnologies\Notifier\AbstractTransport[]|null Either null when setting or an array of data when reading.
      * @throws \BadMethodCallException When modifying an existing configuration.
@@ -320,6 +338,27 @@ class Notification
     }
 
     /**
+     * Returns an array containing the named transport configurations
+     *
+     * @return array Array of configurations.
+     */
+    public static function configuredTransport()
+    {
+        return array_keys(static::$_transportConfig);
+    }
+
+    /**
+     * Delete transport configuration.
+     *
+     * @param string $key The transport name to remove.
+     * @return void
+     */
+    public static function dropTransport($key)
+    {
+        unset(static::$_transportConfig[$key]);
+    }
+
+    /**
      * Get/Set the configuration profile to use for this instance.
      *
      * @param null|string|array $config String with configuration name, or
@@ -339,7 +378,7 @@ class Notification
     }
 
     /**
-     * Send an email using the specified content, template and layout
+     * Send an notification using the specified content, template and layout
      *
      * @param string|array|null $content String with message or array with messages
      * @return array
@@ -349,26 +388,30 @@ class Notification
     {
         $transports = $this->transports();
         if (!$transports) {
-            $msg = 'Cannot send email, transports were not defined. Did you call transports() or define ' .
+            $msg = 'Cannot send notification, transports were not defined. Did you call transports() or define ' .
                 ' transports in the set profile?';
             throw new BadMethodCallException($msg);
         }
 
-        foreach ($transports as $transport) {
+        $responses = [];
+        foreach ($transports as $key => $transport) {
             if (!$transport->canRenderTemplates()) {
                 $this->_message[$transport::TYPE] = $this->_renderTemplates($content, $transport::TYPE);
             }
 
-            $transport->send($this);
+            $responses[$key] = $transport->send($this);
         }
+
+        return $responses;
     }
 
     /**
-     * Build and set all the view properties needed to render the templated emails.
+     * Build and set all the view properties needed to render the templated notifications.
      * If there is no template set, the $content will be returned in a hash
-     * of the text content types for the email.
+     * of the text content types for the notification.
      *
      * @param string $content The content passed in from send() in most cases.
+     * @param string $type The type of template to render.
      * @return array The rendered content with html and text keys.
      */
     protected function _renderTemplates($content, $type)

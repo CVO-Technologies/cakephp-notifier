@@ -3,16 +3,17 @@
 namespace CvoTechnologies\Notifier;
 
 use Cake\Core\App;
+use CvoTechnologies\Notifier\Exception\MissingNotifierException;
 
 trait NotifierAwareTrait
 {
     /**
-     * Returns a mailer instance.
+     * Returns a notifier instance.
      *
-     * @param string $name Mailer's name.
-     * @param \Cake\Mailer\Email|null $notification Notification instance.
-     * @return \Cake\Mailer\Mailer
-     * @throws \Cake\Mailer\Exception\MissingMailerException if undefined mailer class.
+     * @param string $name Notifier's name.
+     * @param \CvoTechnologies\Notifier\Notification|null $notification Notification instance.
+     * @return \CvoTechnologies\Notifier\Notification
+     * @throws \CvoTechnologies\Notifier\Exception\MissingNotifierException if undefined notifier class.
      */
     public function getNotifier($name, Notification $notification = null)
     {
@@ -23,7 +24,7 @@ trait NotifierAwareTrait
         $className = App::className($name, 'Notifier', 'Notifier');
 
         if (empty($className)) {
-            throw new MissingMailerException(compact('name'));
+            throw new MissingNotifierException(compact('name'));
         }
 
         return (new $className($notification));

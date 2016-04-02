@@ -48,6 +48,9 @@ class EmailTransport extends AbstractTransport
         return $email->send();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function canRenderTemplates()
     {
         return true;

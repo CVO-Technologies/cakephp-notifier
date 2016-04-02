@@ -33,6 +33,12 @@ abstract class AbstractTransport
         $this->config($config);
     }
 
+    /**
+     * Whether this transport can render templates on its own. This means we won't call the render method on the
+     * notification.
+     *
+     * @return bool Whether this transport renders templates.
+     */
     public function canRenderTemplates()
     {
         return false;
