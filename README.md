@@ -45,7 +45,10 @@ class UserNotifier extends Notifier
     public function welcome($user)
     {
         $this
-            ->to($user->email)
+            ->to([
+                'irc' => $user->irc_nickname,
+                'twitter' => $user->twitter_nickname
+            ])
             ->subject(sprintf('Welcome %s', $user->name))
             ->template('welcome_message') // By default template with same name as method name is used.
             ->viewVars([
