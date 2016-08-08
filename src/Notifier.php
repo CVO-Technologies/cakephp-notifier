@@ -71,6 +71,7 @@ abstract class Notifier implements EventListenerInterface
                 join('', array_slice(explode('\\', get_class($this)), -1))
             );
         }
+
         return static::$name;
     }
 
@@ -83,6 +84,7 @@ abstract class Notifier implements EventListenerInterface
     public function layout($layout)
     {
         $this->_notification->viewBuilder()->layout($layout);
+
         return $this;
     }
 
@@ -106,6 +108,7 @@ abstract class Notifier implements EventListenerInterface
     public function __call($method, $args)
     {
         call_user_func_array([$this->_notification, $method], $args);
+
         return $this;
     }
 
@@ -119,6 +122,7 @@ abstract class Notifier implements EventListenerInterface
     public function set($key, $value = null)
     {
         $this->_notification->viewVars(is_string($key) ? [$key => $value] : $key);
+
         return $this;
     }
 
@@ -160,6 +164,7 @@ abstract class Notifier implements EventListenerInterface
     protected function reset()
     {
         $this->_notification = clone $this->_clonedNotification;
+
         return $this;
     }
 

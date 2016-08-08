@@ -86,6 +86,7 @@ class Notification
             return $this->_title;
         }
         $this->_title = (string)$title;
+
         return $this;
     }
 
@@ -108,6 +109,7 @@ class Notification
         if ($layout !== false) {
             $this->viewBuilder()->layout($layout ?: false);
         }
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ class Notification
             return $this->viewBuilder()->className();
         }
         $this->viewBuilder()->className($viewClass);
+
         return $this;
     }
 
@@ -138,6 +141,7 @@ class Notification
             return $this->viewVars;
         }
         $this->set((array)$viewVars);
+
         return $this;
     }
 
@@ -153,6 +157,7 @@ class Notification
             return $this->viewBuilder()->theme();
         }
         $this->viewBuilder()->theme($theme);
+
         return $this;
     }
 
@@ -168,6 +173,7 @@ class Notification
             return $this->viewBuilder()->helpers();
         }
         $this->viewBuilder()->helpers((array)$helpers, false);
+
         return $this;
     }
 
@@ -206,8 +212,8 @@ class Notification
             $transportInstances[] = $transport;
         }
 
-
         $this->_transports = $transportInstances;
+
         return $this;
     }
 
@@ -280,6 +286,7 @@ class Notification
         }
 
         unset($config['className']);
+
         return new $className($config);
     }
 
@@ -324,6 +331,7 @@ class Notification
             foreach ($key as $name => $settings) {
                 static::configTransport($name, $settings);
             }
+
             return null;
         }
         if (isset(static::$_transportConfig[$key])) {
@@ -374,6 +382,7 @@ class Notification
             $config = (string)$config;
         }
         $this->_applyConfig($config);
+
         return $this;
     }
 

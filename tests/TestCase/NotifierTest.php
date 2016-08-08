@@ -9,7 +9,10 @@ class NotifierTest extends TestCase
 {
     public function getMockForNotification($methods = [], $args = [])
     {
-        return $this->getMock('CvoTechnologies\Notifier\Notification', (array)$methods, (array)$args);
+        return $this->getMockBuilder('CvoTechnologies\Notifier\Notification')
+            ->setMethods((array)$methods)
+            ->setConstructorArgs((array)$args)
+            ->getMock();
     }
 
     public function testConstructor()
@@ -93,7 +96,10 @@ class NotifierTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $notifier = $this->getMock('TestApp\Notifier\TestNotifier', ['test'], [$notification]);
+        $notifier = $this->getMockBuilder('TestApp\Notifier\TestNotifier')
+            ->setMethods(['test'])
+            ->setConstructorArgs([$notification])
+            ->getMock();
         $notifier->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
@@ -110,7 +116,10 @@ class NotifierTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $notifier = $this->getMock('TestApp\Notifier\TestNotifier', ['test'], [$notification]);
+        $notifier = $this->getMockBuilder('TestApp\Notifier\TestNotifier')
+            ->setMethods(['test'])
+            ->setConstructorArgs([$notification])
+            ->getMock();
         $notifier->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');
@@ -131,7 +140,10 @@ class NotifierTest extends TestCase
             ->method('send')
             ->will($this->returnValue([]));
 
-        $notifier = $this->getMock('TestApp\Notifier\TestNotifier', ['test'], [$notification]);
+        $notifier = $this->getMockBuilder('TestApp\Notifier\TestNotifier')
+            ->setMethods(['test'])
+            ->setConstructorArgs([$notification])
+            ->getMock();
         $notifier->expects($this->once())
             ->method('test')
             ->with('foo', 'bar');

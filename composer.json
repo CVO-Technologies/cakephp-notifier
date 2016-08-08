@@ -2,12 +2,26 @@
     "name": "cvo-technologies/cakephp-notifier",
     "description": "CvoTechnologies/Notifier plugin for CakePHP",
     "type": "cakephp-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marlin Cremers",
+            "email": "m.cremers@cvo-technologies.com",
+            "homepage": "https://cvo-technologies.com/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/CVO-Technologies/cakephp-notifier/issues",
+        "irc": "irc://irc.freenode.org/cvo-technologies",
+        "source": "https://github.com/CVO-Technologies/cakephp-notifier"
+    },
     "require": {
         "php": ">=5.4.16",
-        "cakephp/cakephp": "~3.0"
+        "cakephp/cakephp": "^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "cakephp/cakephp-codesniffer": "^2.1"
     },
     "suggest": {
         "cvo-technologies/cakephp-twitter": "For Twitter notifications"
