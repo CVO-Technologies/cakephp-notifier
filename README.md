@@ -40,7 +40,7 @@ namespace App\Notifier;
 
 use CvoTechnologies\Notifier\Notifier;
 
-class UserMailer extends Notifier
+class UserNotifier extends Notifier
 {
     public function welcome($user)
     {
@@ -68,6 +68,33 @@ For example: `Template/Notification/irc/welcome.ctp`
 Welcome <?= $user->name; ?> to our website!
 ```
 
+#### Using it
+
+Using the notifier is very easy. Here's an example on how to use it in a controller:
+
+```php
+namespace App\Controller;
+
+use CvoTechnologies\Notifier\NotifierAwareTrait;
+
+class UsersController extends AppController
+{
+    use NotifierAwareTrait;
+
+    public function register()
+    {
+        $user = $this->Users->newEntity();
+        if ($this->request->is('post')) {
+            $user = $this->Users->patchEntity($user, $this->request->data())
+            if ($this->Users->save($user)) {
+                $this->getNotifier('User')->send('welcome', [$user]);
+            }
+        }
+        $this->set('user', $user);
+    }
+}
+```
+
 ### Creating a transport
 
 A transport is used to talk to a particular service.
@@ -84,6 +111,7 @@ use CvoTechnologies\Notifier\AbstractTransport;
 class ExampleTransport extends AbstractTransport
 {
     const TYPE = 'example';
+
     /**
      * Send notification.
      *
